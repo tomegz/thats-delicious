@@ -1,17 +1,20 @@
-const mongoose = require("mongoose");
-require("./models/Store");
-const app = require("./app");
+const mongoose = require('mongoose');
 
 // import environmental variables from our variables.env file
 require('dotenv').config({ path: 'variables.env' });
-const port = process.env.PORT;
-mongoose.Promise = global.Promise;
-// import models
-require("./models/Store");
-// connect to MongoDB
+
+// Connect to our Database and handle any bad connections
 mongoose.connect(process.env.DATABASE);
-mongoose.connection.on("error", (err) => {
-  console.log(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 -> ${err.message}`);
+mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
+mongoose.connection.on('error', (err) => {
+  console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+// require models
+require("./models/Store");
+// start the app
+const app = require('./app');
+app.set('port', process.env.PORT || 7777);
+const server = app.listen(app.get('port'), () => {
+  console.log(`Express running → PORT ${server.address().port}`);
+});
